@@ -80,11 +80,9 @@ my_idx = "icanhazcheesburgerZ1337"
 - for automated operation, see run.sh, a shellscript 
   that creates a tmux-session for the sensor to run into 
 
-- during install, a cronjob has been created that runs the
+- during install, a cronjob has been created that runs the main loop
 
-
-# running
-
+- you can always execute `run.sh` manually
 
 
 
