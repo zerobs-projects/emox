@@ -31,11 +31,11 @@ EMOX-display while running a test
 
 - any linux, debian-based preferred
 - required programs:
-    -- python3 with standardlibs (tested for 3.5 and above)
-    -- python3-simplejson 
-    -- tmux
-    -- git
-    -- vnstat
+    - python3 with standardlibs (tested for 3.5 and above)
+    - python3-simplejson 
+    - tmux
+    - git
+    - vnstat
   
 - any small vps/node/server with a public IP that is accessible from the internet
 - NIC should be at least 1 GB/s
