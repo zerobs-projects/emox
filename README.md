@@ -35,6 +35,7 @@ EMOX-display while running a test
   -- python3-simplejson 
   -- tmux
   -- git
+  -- vnstat
   
 - any small vps/node/server with a public IP that is accessible from the internet
 - NIC should be at least 1 GB/s
@@ -53,7 +54,7 @@ EMOX-display while running a test
 - rest can run as normal user (if not SELINUX is inplace)
 - a sample-config will be created as well
 
-- 
+
 
 ## Configuration
 

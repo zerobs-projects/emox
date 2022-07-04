@@ -10,12 +10,12 @@ apt -y update
 # not on client-systems
 #apt -y upgrade 
 
-apt -y install python3-simplejson tmux
+apt -y install python3-simplejson tmux vnstat 
 
 echo '
 
 iface = "eth0"
-srv_port = 6040
+srv_port = 80443
 
 my_idx = "icanhazcheesburgerZ1337"
 
