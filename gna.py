@@ -116,7 +116,7 @@ def welcome():
 
 def run_server(server_class=HTTPServer, handler_class=S, port=srv_port):
   server_address = ('', port)
-  httpd = server_class(server_address, handler_class(server="Apache", close_connection=True))
+  httpd = server_class(server_address, handler_class)
   loggy(ok, 'Starting httpd on port: %s ...\n' % srv_port)
   try:
     httpd.serve_forever()
