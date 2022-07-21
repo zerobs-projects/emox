@@ -65,13 +65,17 @@ EMOX-display while running a test
 ## sample-config
 
 iface = "eth0"
+
+file_only = "no"
 srv_port = 6040
 
 my_idx = "icanhazcheesburgerZ1337"
 
+
+
 ~~~~
 
-## Operating
+## Operating (default mode)
 
 - simply reboot the node to regain full funtionality
 
@@ -85,12 +89,72 @@ my_idx = "icanhazcheesburgerZ1337"
 - you can always execute `run.sh` manually
 
 
+## Running gna behind an nginx / reading and delivering the static stats-file (non default)
+
+
+Please note: the automated installer-scripts has been tested for
+debian-based systems. If you want to install it on other
+OS, dont expect the installer-script to run smoothely (esp.
+not on a BSD), so you need to execute all steps from the script manually
+
+ 
+- this is the preferred method when using nginx
+- set `file_only = "yes"` in config.py
+- run `sudo ./install_nginx.sh` or execute steps manually
+- run the gna/stats-script to create the file only
+- beware of the umask for the user that runs gna, the nginx-user must be able
+  to read the stats-file
+- the automatically generated nginx_config is in `/etc/nginx/sits-enabled/gna-ssl`
+
+
+## Running gna behind an nginx / proxying to the gna-service (untested)
+
+
+Please note: the automated installer-scripts has been tested for
+debian-based systems. If you want to install it on other
+OS, dont expect the installer-script to run smoothely (esp.
+not on a BSD), so you need to execute all steps from the script manually
+
+- untested, dont use yet
+- set `file_only = "no"` in config.py
+- run `sudo ./install_nginx.sh` or execute steps manually
+- run the gna-script to have this as a service
+- the automatically generated nginx_config is in `/etc/nginx/sits-enabled/gna-ssl`
+
+- change the config-file to have the following added: 
+
+~~~
+
+proxy_cache_path /tmp/nginx/cache levels=1:1 keys_zone=GNACACHE:1m;
+
+
+location / {
+
+    proxy_pass http://localhost:12345; 
+    # maybe proxy_cache as well
+  
+    proxy_cache GNACACHE;
+    proxy_cache_key $scheme$proxy_host$request_uri;
+    proxy_cache_use_stale  off;
+    proxy_cache_valid 5s;
+
+}
+
+~~~
+
+
+
+
+
+
 
 # Documentation / values
 
 
 v5 - 2021-03
 
+- file_only mode to work with nginx 
+- nginx-receipts included 
 - TX: transmitting/sending
 - RX: receiving
 - packets: real packets

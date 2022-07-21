@@ -3,7 +3,7 @@
 # gnar/runtime for EMOX-monitoring
 #
 
-version = "Release 5, v0.8.67, 2022-05-12"
+version = "Release 5, v0.8.70, 2022-07-12"
 
 
 import os
@@ -130,16 +130,27 @@ stats = {
 
     "rx": { "bytes": 0, "packets": 0, "avg": 0},
     "tx": { "bytes": 0, "packets": 0, "avg": 0},
+    "timestamp:" int(time.time(), 
     
 
 }
 
 welcome()
 
-# lets start the webserver
-x = threading.Thread(target=run_server, args=())
-# ~ loggy(ok, "Main    : before running thread")
-x.start()
+# this is the default
+webserver_run = "yes"
+try:
+  if file_only == "yes":
+    webserver_run = "no"
+except:
+  pass
+  
+if webserver_run == "yes":
+  
+  # lets start the webserver, only if need be
+  x = threading.Thread(target=run_server, args=())
+  # ~ loggy(ok, "Main    : before running thread")
+  x.start()
 
 loggy(ok, "[i] collecting stats for iface [ %s ] " % iface)
 
@@ -182,7 +193,8 @@ while 1:
     stats["tx"]["avg"] = int(tx / tp)
   except:
     stats["tx"]["avg"] = 0
-    
+  
+  stats["timestamo"] = int(time.time())
   out_write(stats)
   loggy(ok, stats)
   

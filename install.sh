@@ -18,12 +18,14 @@ iface = "eth0"
 srv_port = 80443
 
 my_idx = "icanhazcheesburgerZ1337"
+file_only = "no"
 
 
 ' > config.py
 echo "
 
 > sample_config created
+> pleae edit and change my_idx
 
 "
 
