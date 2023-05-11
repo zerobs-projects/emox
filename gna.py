@@ -3,7 +3,7 @@
 # gnar/runtime for EMOX-monitoring
 #
 
-version = "Release 5, v0.8.70, 2022-07-12"
+version = "Release 5, v0.8.90, 2023-04-12"
 
 
 import os
@@ -110,7 +110,7 @@ def welcome():
 /_______  /\\____|__  /\\_______  /___/\\  \\  / /     / /     
         \\/         \\/         \\/      \\_/  \\/      \\/        
           v %s 
-         (c) copyright 2020-2022 zeroBS GmbH
+         (c) copyright 2020-2023 zeroBS GmbH
 """ % version)
 
 
@@ -130,7 +130,7 @@ stats = {
 
     "rx": { "bytes": 0, "packets": 0, "avg": 0},
     "tx": { "bytes": 0, "packets": 0, "avg": 0},
-    "timestamp:" int(time.time(), 
+    "timestamp": int(time.time()), 
     
 
 }
@@ -194,7 +194,7 @@ while 1:
   except:
     stats["tx"]["avg"] = 0
   
-  stats["timestamo"] = int(time.time())
+  stats["timestamp"] = int(time.time())
   out_write(stats)
   loggy(ok, stats)
   
