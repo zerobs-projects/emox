@@ -138,6 +138,8 @@ location / {
     proxy_cache_use_stale  off;
     proxy_cache_valid 5s;
 
+    # Also use a Cache lock (only one request going to gna.py at a time)
+    proxy_cache_lock on;
 }
 
 ~~~
