@@ -3,7 +3,7 @@
 # gnar/runtime for EMOX-monitoring
 #
 
-version = "Release 5, v0.8.90, 2023-04-12"
+version = "Release 5, v0.8.140, 2025-07-12"
 
 
 import os
@@ -27,6 +27,9 @@ except:
 
 
 out_file = "stats"
+
+# per default on
+webserver_run = "yes"
 
 class bcolors:
     HEADER = '\033[95m'
@@ -53,6 +56,49 @@ def get_packets(t, iface):
   with open('/sys/class/net/' + iface + '/statistics/' + t + '_packets', 'r') as f:
     data = f.read();
   return int(data)
+
+def get_memory_usage():
+    """
+    Returns memory stats as a tuple of strings (used_MB, free_MB),
+    both formatted to 2 decimal places.
+    """
+    meminfo = {}
+    with open("/proc/meminfo") as f:
+        for line in f:
+            parts = line.split(":")
+            key = parts[0]
+            value_kb = int(parts[1].strip().split()[0])  # value in KB
+            meminfo[key] = value_kb
+
+    total = meminfo.get("MemTotal", 0)
+    free = meminfo.get("MemFree", 0)
+    buffers = meminfo.get("Buffers", 0)
+    cached = meminfo.get("Cached", 0)
+    sreclaimable = meminfo.get("SReclaimable", 0)
+    shmem = meminfo.get("Shmem", 0)
+
+    # Calculate used memory like `free` command (used = total - free - buffers/cache)
+    used = total - free - buffers - cached - sreclaimable + shmem
+
+    # Convert to MB and format
+    used_mb = round(used / 1024)
+    free_mb = round((free + buffers + cached + sreclaimable - shmem) / 1024)
+    total_mb =  round(total / 1024)
+
+    return { "used_mem": used_mb, "free_mem": free_mb, "total_mb": total_mb }
+
+def get_cpu_stats():
+  cpus = os.cpu_count()
+  if hasattr(os, 'getloadavg'):
+    load = os.getloadavg()
+    load_avg = tuple(f"{avg:.2f}" for avg in load)  # Returns a tuple (1min, 5min, 15min)
+  else:
+    load_avg = (999,999,999)
+  
+  cpu_dict = { "cpu_count": cpus, "load": load_avg }
+  return(cpu_dict)
+  
+  
 
 def out_write(stats):
   with open(out_file, "w") as f:
@@ -110,14 +156,14 @@ def welcome():
 /_______  /\\____|__  /\\_______  /___/\\  \\  / /     / /     
         \\/         \\/         \\/      \\_/  \\/      \\/        
           v %s 
-         (c) copyright 2020-2023 zeroBS GmbH
+         (c) copyright 2020-2025 zeroBS GmbH
 """ % version)
 
 
 def run_server(server_class=HTTPServer, handler_class=S, port=srv_port):
   server_address = ('', port)
   httpd = server_class(server_address, handler_class)
-  loggy(ok, 'Starting httpd on port: %s ...\n' % srv_port)
+  loggy(ok, 'Starting httpd on port: %s ...\n' % port)
   try:
     httpd.serve_forever()
   except KeyboardInterrupt:
@@ -138,7 +184,9 @@ stats = {
 welcome()
 
 # this is the default
-webserver_run = "yes"
+
+
+
 try:
   if file_only == "yes":
     webserver_run = "no"
@@ -194,7 +242,9 @@ while 1:
   except:
     stats["tx"]["avg"] = 0
   
-  stats["timestamp"] = int(time.time())
+  stats["timestamo"] = int(time.time())
+  stats["cpu"] = get_cpu_stats()
+  stats["mem"] = get_memory_usage()
   out_write(stats)
   loggy(ok, stats)
   

@@ -1,18 +1,23 @@
 # EMOX/GNA - external monitoring - sensor to be used with zeroBS ddos-stresstest-platform
 
-- v5 or later
+- Platform v5 or later
 
 - a simple node to be installed into a clients network 
 - GNA -> the node to collect the stats locally
 - EMOX -> gna-display (external monitoring exchange)
 
 Desc: Emox/gna is a toolset to collect and display trafficdata
-inside a datacenter, especially for ddos-stresstests.
+inside a datacenter, especially for ddos-stresstests (volumetric and layer 7)
 
-it consits of a local sensor that can be shoot at with tcp/udp - traffic
-(gna) and a monitoring-endpoint tha can collect and display
+
+it consists of a local sensor that can be shoot at with tcp/udp - traffic
+(gna) or layer-7-/webtraffic and a monitoring-endpoint tha can collect and display
 data from multiple gna-endpoints, allowing for a fine-granular display
-of reachability and the performance of your anti-ddos-solution
+of reachability, performance and filterquality of your anti-ddos-solution
+for both volumetric attacks and layer-7/web-attacks
+
+this sensor works with ipv4 and ipv6 - traffic, single IPs or whole networks 
+
 
 
 
@@ -27,6 +32,7 @@ gna-engine to feed the EMOX-display
 EMOX-display while running a test
 
 
+
 # requirements
 
 - any linux, debian-based preferred
@@ -36,6 +42,7 @@ EMOX-display while running a test
     - tmux
     - git
     - vnstat
+    - tcpdump/mtr
   
 - any small vps/node/server with a public IP that is accessible from the internet
 - NIC should be at least 1 GB/s
@@ -46,15 +53,21 @@ EMOX-display while running a test
 - can simulate any tcp/udp - service to be shoot at
 
 
-# Setup
 
-- git clone https://github.com/zerobs-loic/emox
+# Setup (locally)
+
+- git clone https://github.com/zerobs-projects/emox
 - run `install.sh` as root to install required packages
 - if you dont run debian, install the required packages manually
 - rest can run as normal user (if not SELINUX is inplace)
 - a sample-config will be created as well
 
+# Setup (network/ddos-appliances)
 
+- the sensor MUST be placed behind any ddos-protection, if you want to measure quality and speed of the ddos-filters, but before firewalls
+- the traffic of the targets that get shot at (IPs, CIDRS) MUST be routed
+  onto the sensor
+- all traffic MUST reach the NIC that has to be configured for the sensor (see below)
 
 ## Configuration
 
@@ -73,6 +86,8 @@ my_idx = "icanhazcheesburgerZ1337"
 
 
 
+
+
 ~~~~
 
 ## Operating (default mode)
@@ -87,6 +102,20 @@ my_idx = "icanhazcheesburgerZ1337"
 - during install, a cronjob has been created that runs the main loop
 
 - you can always execute `run.sh` manually
+
+## Layer 7 Mode
+
+- very usefull for Avydos-customers who wants to activate Autopilot-Mode
+- run behind a WAF to test your filter-speed and quality
+
+- you need
+    - a spare mini vps wirth linux, nginx-full (nginx + lua needed) and preferrable TLS
+    - a testdomain 
+
+- setup the testdomain to point to the server (e.g. emox.example.com)
+- setup nginx to answer on your testdomain
+- include emox.conf into the server/site-definition
+- see avydos-docs to learn how to access and test
 
 
 ## Running gna behind an nginx / reading and delivering the static stats-file (non default)

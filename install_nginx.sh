@@ -16,7 +16,8 @@ apt -y update
 # not on client-systems
 #apt -y upgrade 
 
-apt -y install nginx openssl
+apt -y install nginx-extras openssl lua5.3-redis  lua-nginx-redis lua-nginx-redis-connector 
+
 
 echo "
 
